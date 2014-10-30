@@ -105,6 +105,7 @@ scb.InstructionsList = function scb_InstructionsList(data, context, parent) {
 scb.Template = function scb_Template(data, context, parent) {
     var self = this;
     self.parent = parent;
+    self.__data__ = data;
     scb.Utils.initialize_accessor_field(self, data, 'instructions', [], scb.InstructionsList, context);
     scb.Utils.initialize_accessor_field(self, data, 'ui', {}, scb.template.UI, context);
     _.each(data, function (value, key) {
