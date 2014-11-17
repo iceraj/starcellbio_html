@@ -132,13 +132,15 @@
 .scb_s_dashboard_table_body {
   background-color: #fff;
 }
+.scb_s_dashboard_table_pos {
+  margin-top: 70px;
+  margin-left: 10px;
+}
 table.scb_s_dashboard_table {
   border: 3px solid #d5dce4;
   border-spacing: 0;
   width: 98%;
   background-color: white;
-  margin-top: 70px;
-  margin-left: 10px;
 }
 .scb_s_dashboard_new_assignment_button {
   border: none;
