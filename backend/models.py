@@ -13,6 +13,8 @@ class Course(models.Model):
     code = models.CharField(max_length=50, primary_key=True)
     course_name = models.TextField()
     ownerID = models.ForeignKey(User, related_name='course_owner', default=1)
+    def __unicode__( self ):
+        return self.course_name
 
 # data refers to JSON for information
 class Assignment(models.Model):
@@ -22,6 +24,10 @@ class Assignment(models.Model):
     data = models.TextField()
     ownerID = models.ForeignKey(User, related_name='owner', default=1)
     access = models.CharField(max_length=50, default='public')
+    basedOn = models.ForeignKey('Assignment', null=True)
+
+    def __unicode__( self ):
+        return "{0} ({1})".format(self.assignmentName,self.assignmentID)
 
 
 class StudentAssignment(models.Model):
