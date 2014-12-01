@@ -16,3 +16,17 @@ scb_ex.dialog = function(opt_data, opt_sb) {
   output.append('</tr></tbody></table><div class=\'scb_ex_button_float\'><button class=\'scb_ex_inner_dialog_cancel scb_s_gray_button\' aria-label=\'Cancel\' role=\'button\'>CANCEL</button><button class=\'scb_ex_inner_dialog_add scb_s_gray_button\' aria-label=\'Add Samples\' role=\'button\'>ADD SAMPLES</button></div></div></div>');
   return opt_sb ? '' : output.toString();
 };
+
+
+scb_ex.dialog_assignment_builder = function(opt_data, opt_sb) {
+  var output = opt_sb || new soy.StringBuilder();
+  output.append('<div class=\'scb_ex_inner_dialog\' role=\'dialog\' aria-label=\'Add Samples\'><h1 class=\'scb_ex_inner_dialog_title\' role=\'presentation\' aria-label=\'Add Samples\'><span class=\'scb_ex_inner_dialog_title_close\' role=\'button\' aria-label=\'Close Add Samples\'>&#215;</span>Add Samples (AB) </h1><div class=\'scb_ex_inner_dialog_body\'><table class="scb_s_experiment_setup_table" role=\'grid\' aria-label=\'Cell Lines\'><thead class="scb_s_experiment_setup_table_head"><td role=\'columnheader\' aria-label=\'selected\' class=\'scb_s_experiment_setup_table_heading\' style=\'width:80px\'>Selected</td><td role=\'columnheader\' aria-label=\'cell line\' class=\'scb_s_experiment_setup_table_heading\'>Label</td></thead><tbody class="scb_s_experiment_setup_table_body">');
+  var elementList22 = opt_data.template.ui.add_multiple_dialog;
+  var elementListLen22 = elementList22.length;
+  for (var elementIndex22 = 0; elementIndex22 < elementListLen22; elementIndex22++) {
+    var elementData22 = elementList22[elementIndex22];
+    output.append('<tr role=\'row\' aria-label=\'Sample\'><td class=\'scb_s_experiment_setup_table_border\'><input class=\'scb_f_experiment_setup_dialog_checkbox_assignment_builder\' type="checkbox" role=\'checkbox\' assignment_id=\'', soy.$$escapeHtml(opt_data.assignment.id), '\' experiment_id=\'', soy.$$escapeHtml(opt_data.experiment.id), '\' spid="', soy.$$escapeHtml(elementData22.id), '" aria-checked=\'false\'></td><td class=\'scb_s_experiment_setup_table_border\'>', soy.$$escapeHtml(elementData22.strain), ' ', soy.$$escapeHtml(elementData22.protocol), '</td></tr>');
+  }
+  output.append('</tr></tbody></table><div class=\'scb_ex_button_float\'><button class=\'scb_ex_inner_dialog_cancel scb_s_gray_button\' aria-label=\'Cancel\' role=\'button\'>CANCEL</button><button class=\'scb_ex_inner_dialog_add_assignment_builder scb_s_gray_button\' aria-label=\'Add Samples\' role=\'button\'>ADD SAMPLES</button></div></div></div>');
+  return opt_sb ? '' : output.toString();
+};
