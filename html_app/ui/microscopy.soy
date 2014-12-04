@@ -315,10 +315,12 @@
             {if $r.lane}
                 {if $assignment.template.model.microscopy.is_ab}
 					  {foreach $k in keys($assignment.template.micro_kinds[$r.lane.kind].conditions)}
+					  {if $assignment.template.micro_kinds[$r.lane.kind].conditions[$k].identifiers[$r.lane.cell_treatment.identifier] }
 						  <input class='scb_f_microscopy_select_conditions' type="radio" name="{if $r.kind == 'existing'}{$r.lane.id}{/if}" value="{$k}" microscopy_id='{$microscopy.id}' cell_treatment_id='{$r.cell_treatment.id}'
 								   assignment_id='{$assignment.id}' experiment_id='{$experiment.id}' lane_kind="{$r.kind}" lane_id="{if $r.kind == 'existing'}{$r.lane.id}{/if}"
 								   {if $r.is_sample_enabled and ($r.lane.slide_conditions == $k)}checked='checked'{/if}/><span class="scb_s_western_blot_choose_gel_type_input_text ">{$assignment.template.micro_kinds[$r.lane.kind].conditions[$k].name}</span>
 							&nbsp;&nbsp;
+					  {/if}
 					  {/foreach}
                 {/if}
 				{if $r.lane.kind == 'IHC'}
@@ -906,8 +908,11 @@
                 <option  role='option' selected="selected" disabled="disabled" value=''>Select Analysis</option>
             {/if}
                 {foreach $k in keys($assignment.template.micro_kinds)}
+                {if $assignment.template.micro_kinds[$k].identifiers[$lane.cell_treatment.identifier] }
+
                 <option value='{$k}' role='option'
                     {if $lane.kind == 'existing' and $lane.lane.kind == $k}selected="selected"{/if}>{$kinds[$k].name}</option>
+                {/if}
                 {/foreach}
                 </select>
 
