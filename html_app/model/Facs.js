@@ -86,6 +86,8 @@ scb.Facs = function scb_Facs(data, context, parent) {
     }, scb.utils.noop);
 
     scb.Utils.initialize_accessor_field(self, data, 'is_cell_treatment_enabled', {}, null, context);
+    scb.Utils.initialize_accessor_field(self, data, 'is_cell_treatment_live', {}, null, context);
+
     self.rows_state = function (exp) {
         var skip_placeholders = false;
         if ( _.keys(context.template.facs_kinds).length == 1  && _.keys(context.template.facs_kinds[Object.keys(context.template.facs_kinds)[0]].conditions).length == 1) {
@@ -108,7 +110,8 @@ scb.Facs = function scb_Facs(data, context, parent) {
                         display_sample: index == 0,
                         is_sample_enabled: self.is_cell_treatment_enabled[e.id],
                         index: index,
-                        is_valid: self.is_cell_treatment_enabled[e.id] && ee && ee.conditions
+                        is_valid: self.is_cell_treatment_enabled[e.id] && ee && ee.conditions,
+                        live: self.is_cell_treatment_live[e.id]
                     });
                 });
                 if (!skip_placeholders) {
@@ -127,7 +130,8 @@ scb.Facs = function scb_Facs(data, context, parent) {
                     display_sample: true,
                     cell_treatment: e,
                     is_sample_enabled: self.is_cell_treatment_enabled[e.id],
-                    is_valid: false
+                    is_valid: false,
+                    live: self.is_cell_treatment_live[e.id]
                 })
             }
         });
@@ -138,8 +142,24 @@ scb.Facs = function scb_Facs(data, context, parent) {
         _.each(rows, function (r, index, rows) {
             r.display_text = r.cell_treatment.format_row();
         });
-        
+
+        _.each(rows, function(r,index,rows) {
+            var identifier = r.cell_treatment.identifier;
+            var facs_kinds = context.template.facs_kinds;
+            _.each(facs_kinds, function( obj , key ) {
+                if(obj['Live'] && obj['Live'][identifier])
+                {
+                    r.has_live = true;
+                }
+                if(obj['Fixed'] && obj['Fixed'][identifier])
+                {
+                    r.has_fixed = true;
+                }
+            });
+        });
+
         rows = _.sortBy(rows, function(obj){ if(obj.kind=='existing')return obj.lane.order_id; else return;});
+
         return {rows: rows, valid: count};
     }
 
