@@ -5,7 +5,7 @@ scb.FacsList = function scb_FacsList(data, context, parent) {
     self.parent = parent;
 
     scb.ModelHelpers.common_list_code(self, data, scb.Facs, context, self);
-	scb.Utils.initialize_accessor_field(self, data, 'start_tabs_index', 0, null, context);
+    scb.Utils.initialize_accessor_field(self, data, 'start_tabs_index', 0, null, context);
 
 
     self.start = function (d) {
@@ -70,7 +70,7 @@ scb.Facs = function scb_Facs(data, context, parent) {
     scb.Utils.initialize_accessor_field(self, data, 'double_analysis', false, null, context);
     scb.Utils.initialize_accessor_field(self, data, 'gate_count', 0, null, context);
     scb.Utils.initialize_accessor_field(self, data, 'midpoint', {}, null, context);
-	scb.Utils.initialize_accessor_field(self, data, 'prep_scroll', 0, null, context);
+    scb.Utils.initialize_accessor_field(self, data, 'prep_scroll', 0, null, context);
     scb.Utils.initialize_accessor_field(self, data, 'show_analysis', false, null, context);
     scb.Utils.initialize_accessor_field(self, data, 'apply_dna_analysis_to_all', false, null, context);
     scb.Utils.initialize_accessor_field(self, data, 'instructions_show_state', false, null, context);
@@ -90,7 +90,7 @@ scb.Facs = function scb_Facs(data, context, parent) {
 
     self.rows_state = function (exp) {
         var skip_placeholders = false;
-        if ( _.keys(context.template.facs_kinds).length == 1  && _.keys(context.template.facs_kinds[Object.keys(context.template.facs_kinds)[0]].conditions).length == 1) {
+        if (_.keys(context.template.facs_kinds).length == 1 && _.keys(context.template.facs_kinds[Object.keys(context.template.facs_kinds)[0]].conditions).length == 1) {
             skip_placeholders = true;
         }
         var experiment = exp || self.parent.parent;
@@ -98,10 +98,12 @@ scb.Facs = function scb_Facs(data, context, parent) {
         var rows = [];
         _.each(experiment.cell_treatment_list.list, function (e) {
             if (grouped_rows[e.id]) {
-            	if( _.keys(context.template.facs_kinds).length == 1 || _.isEqual(_.map(grouped_rows[e.id], function(z){return z.conditions}).sort(), _.keys(e.treatment_list.list[0].facs).sort()))
-            		skip_placeholders=true;
-            	else
-            		skip_placeholders=false;
+                if (_.keys(context.template.facs_kinds).length == 1 || _.isEqual(_.map(grouped_rows[e.id], function (z) {
+                    return z.conditions
+                }).sort(), _.keys(e.treatment_list.list[0].facs).sort()))
+                    skip_placeholders = true;
+                else
+                    skip_placeholders = false;
                 _.each(grouped_rows[e.id], function (ee, index) {
                     rows.push({
                         kind: 'existing',
@@ -138,27 +140,35 @@ scb.Facs = function scb_Facs(data, context, parent) {
         var count = 0;
         _.each(rows, function (e) {
             if (e.is_valid) count++;
+            if(!self.is_cell_treatment_live[e.id])
+            {
+                self.is_cell_treatment_live[e.id] = false;
+            }
         });
         _.each(rows, function (r, index, rows) {
             r.display_text = r.cell_treatment.format_row();
         });
 
-        _.each(rows, function(r,index,rows) {
+        _.each(rows, function (r, index, rows) {
             var identifier = r.cell_treatment.identifier;
             var facs_kinds = context.template.facs_kinds;
-            _.each(facs_kinds, function( obj , key ) {
-                if(obj['Live'] && obj['Live'][identifier])
-                {
+            var list = { 'Live': [], 'Fixed': []};
+            _.each(facs_kinds, function (obj, key) {
+                if (obj['Live'] && obj['Live'][identifier]) {
                     r.has_live = true;
+                    list['Live'].push(key);
                 }
-                if(obj['Fixed'] && obj['Fixed'][identifier])
-                {
+                if (obj['Fixed'] && obj['Fixed'][identifier]) {
                     r.has_fixed = true;
+                    list['Fixed'].push(key);
                 }
             });
+            r.lysate_types = list;
         });
 
-        rows = _.sortBy(rows, function(obj){ if(obj.kind=='existing')return obj.lane.order_id; else return;});
+        rows = _.sortBy(rows, function (obj) {
+            if (obj.kind == 'existing')return obj.lane.order_id; else return;
+        });
 
         return {rows: rows, valid: count};
     }

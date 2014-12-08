@@ -322,7 +322,8 @@ FACS Main View
             	experiment_id = "{$experiment.id}"
             	facs_id = "{$facs.id}"
             	cell_treatment_id="{$r.cell_treatment.id}"
-            	name="CT_{$r.cell_treatment.id}_{if $r.kind=='existing'}{$r.lane.id}{/if}" value="fixed" {if $r.live}checked {/if}
+            	name="CT_{$r.cell_treatment.id}_{if $r.kind=='existing'}{$r.lane.id}{/if}" value="fixed"
+            	{if $r.live == 'fixed'}checked {/if}
             	class='scb_f_facs_cell_treatment_radio scb_s_facs_cell_treatment_radio facs_locked'><span class='scb_s_facs_cell_treatment_text {if $r.is_sample_enabled}facs_locked{else}scb_s_microscopy_dim_conditions{/if}'>Fixed</span></input>
                 </span>
                 {/if}
@@ -334,7 +335,7 @@ FACS Main View
             	facs_id = "{$facs.id}"
             	cell_treatment_id="{$r.cell_treatment.id}"
             	name="CT_{$r.cell_treatment.id}_{if $r.kind=='existing'}{$r.lane.id}{/if}"
-            	value="live" {if not $r.live}checked {/if}
+            	value="live" {if $r.live == 'live'}checked {/if}
             	class='scb_f_facs_cell_treatment_radio scb_s_facs_cell_treatment_radio facs_locked'><span class='scb_s_facs_cell_treatment_text {if $r.is_sample_enabled}facs_locked{else}scb_s_microscopy_dim_conditions{/if}'>Live</span></input>
                 </span>
                 {/if}
@@ -349,6 +350,7 @@ FACS Main View
                 {param cell_treatment:$r.cell_treatment/}
                 {param kinds:$kinds/}
                 {param lane:$r/}
+                {param live:$r.live/}
                 {/call}
             </td>
             <td class=' scb_s_facs_samples_table_td {if $r.display_sample}{else}scb_s_experiment_setup_table_border{/if}' style='width:232px;'>
@@ -492,6 +494,7 @@ FACS Main View
 @param cell_treatment
 @param lane
 @param kinds
+@param live
 */
 {template .display_lysate_types}
 
@@ -510,22 +513,35 @@ FACS Main View
 	{if $assignment.template.model.facs.is_ab}
         {if $lane.kind == 'existing'}
         {foreach $k in keys($kinds)}
-            {if $lane.has_live and $kinds[$k]['Live'][$cell_treatment.id]}
+            {if $live == 'live' and $lane.has_live and $kinds[$k]['Live'][$cell_treatment.id]}
                 <option value='{$k}' role='option'
             {if $lane.lane.kind == $k}selected="selected"{/if}>{$kinds[$k].name}</option>
             {/if}
-            {if $lane.has_fixed and $kinds[$k]['Fixed'][$cell_treatment.id]}
+
+            {if $live == 'fixed' and $lane.has_fixed and $kinds[$k]['Fixed'][$cell_treatment.id]}
                 <option value='{$k}' role='option'
             {if $lane.lane.kind == $k}selected="selected"{/if}>{$kinds[$k].name}</option>
             {/if}
         {/foreach}
         {else}
-        {if length(keys($kinds)) != 1}
-        <option selected="selected" disabled="disabled" role='option' value=''>Select Analysis</option>
-        {/if}
-        {foreach $k in keys($kinds)}
-        <option role='option' value='{$k}'>{$kinds[$k].name}</option>
-        {/foreach}
+            {if length(keys($kinds)) != 1}
+            <option selected="selected" disabled="disabled" role='option' value=''>Select Analysis</option>
+            {/if}
+            {if $live == 'live' and $lane.has_live and $lane.lysate_types['Live']}
+                {foreach $k in $lane.lysate_types['Live']}
+                <option value='{$k}' role='option'
+            {if $lane.lane and $lane.lane.kind == $k}selected="selected"{/if}>{$kinds[$k].name}</option>
+                {/foreach}
+            {/if}
+            {if $live == 'fixed' and $lane.has_fixed and $lane.lysate_types['Fixed']}
+                {foreach $k in $lane.lysate_types['Fixed']}
+                <option value='{$k}' role='option'
+            {if $lane.lane and $lane.lane.kind == $k}selected="selected"{/if}>{$kinds[$k].name}</option>
+                {/foreach}
+            {/if}
+//            {foreach $k in keys($kinds)}
+//            <option role='option' value='{$k}'>{$kinds[$k].name}</option>
+//            {/foreach}
 	    {/if}
 	{else}
 	{if $lane.kind == 'existing'}
