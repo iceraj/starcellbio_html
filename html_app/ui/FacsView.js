@@ -56,8 +56,8 @@ scb.ui.static.FacsView.scb_f_facs_cell_treatment_radio = function (element, even
 
     var val = $(element).val();
     var cell_treatment_id = $(element).attr('cell_treatment_id');
-
-    parsed.facs.is_cell_treatment_live[cell_treatment_id] = val;
+    var map_key = $(element).attr('map_key');
+    parsed.facs.is_cell_treatment_live[map_key] = val;
 
     $('.scb_f_facs_select_lysate_type', $(element).parent().parent()).each(function (e) {
         scb.ui.static.FacsView.scb_f_facs_select_lysate_type(this);
@@ -129,19 +129,27 @@ scb.ui.static.FacsView.scb_f_facs_select_lysate_type = function (element, event)
             if (_.size(parsed.assignment.template.facs_kinds[sample_kind].conditions) == 1) {
                 slide_conditions_val = _.keys(parsed.assignment.template.facs_kinds[sample_kind].conditions)[0]
             }
-            parsed.facs.lanes_list.start({
+            var line = parsed.facs.lanes_list.start({
                 kind: sample_kind,
                 conditions: slide_conditions_val,
                 cell_treatment_id: cell_treatment_id,
                 experiment_id: parsed.experiment.id
             });
+            var cell_treatment_id = $(element).attr('cell_treatment_id');
+            var map_key = cell_treatment_id + '_' + line.id;
+            parsed.facs.is_cell_treatment_live[map_key] = parsed.facs.is_cell_treatment_live[cell_treatment_id+'_'];
+
         }
         else {
-            parsed.facs.lanes_list.start({
+            var line = parsed.facs.lanes_list.start({
                 kind: sample_kind,
                 cell_treatment_id: cell_treatment_id,
                 experiment_id: parsed.experiment.id
             });
+            var cell_treatment_id = $(element).attr('cell_treatment_id');
+            var map_key = cell_treatment_id + '_' + line.id;
+            parsed.facs.is_cell_treatment_live[map_key] = parsed.facs.is_cell_treatment_live[cell_treatment_id+'_'];
+
         }
 
 // 		}
@@ -1340,6 +1348,7 @@ scb.ui.FacsView = function scb_ui_FacsView(gstate) {
             can_prepare_lysate: can_prepare_lysate
         }));
 
+        $('input.scb_f_facs_cell_treatment_radio[type=radio][facs_lane_id]').attr('disabled','disabled')
 
         if (kind == 'sample_prep') {
             $('.scb_s_facs_samples_table', '.scb_s_facs_view').scrollTop(state.facs.prep_scroll);

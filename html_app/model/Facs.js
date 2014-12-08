@@ -113,7 +113,7 @@ scb.Facs = function scb_Facs(data, context, parent) {
                         is_sample_enabled: self.is_cell_treatment_enabled[e.id],
                         index: index,
                         is_valid: self.is_cell_treatment_enabled[e.id] && ee && ee.conditions,
-                        live: self.is_cell_treatment_live[e.id]
+                        live: self.is_cell_treatment_live[e.id+'_'+ee.id]
                     });
                 });
                 if (!skip_placeholders) {
@@ -122,7 +122,8 @@ scb.Facs = function scb_Facs(data, context, parent) {
                         display_sample: false,
                         cell_treatment: e,
                         is_sample_enabled: self.is_cell_treatment_enabled[e.id],
-                        is_valid: false
+                        is_valid: false,
+                        live: self.is_cell_treatment_live[e.id+'_']
                     });
                 }
             } else {
@@ -133,7 +134,7 @@ scb.Facs = function scb_Facs(data, context, parent) {
                     cell_treatment: e,
                     is_sample_enabled: self.is_cell_treatment_enabled[e.id],
                     is_valid: false,
-                    live: self.is_cell_treatment_live[e.id]
+                    live: self.is_cell_treatment_live[e.id+'_']
                 })
             }
         });
